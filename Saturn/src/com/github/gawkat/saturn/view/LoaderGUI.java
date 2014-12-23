@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 /**
@@ -46,9 +47,13 @@ public class LoaderGUI extends JFrame {
 									DataFlavor.javaFileListFlavor);
 					for (File file : droppedFiles) {
 						System.out.println(file.getAbsolutePath());
-						// TODO
-						MainGUI.init(file);
-						dispose();
+						if (file.getName().endsWith(".jar")
+								|| file.getName().endsWith(".class")) {
+							MainGUI.init(file);
+							dispose();
+						} else {
+							invalidFile();
+						}
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -58,6 +63,12 @@ public class LoaderGUI extends JFrame {
 
 		add(label);
 		setVisible(true);
+	}
+
+	private void invalidFile() {
+		JOptionPane.showMessageDialog(this,
+				"Please choose a jar or class file", "Invalid file",
+				JOptionPane.ERROR_MESSAGE);
 	}
 
 }
