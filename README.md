@@ -8,6 +8,8 @@ Don't expect this to be of any use, or even work.
 Prerequisites
 ====
 
-● Any? version of the Java Development Kit
+● Java Runtime Environment version 8 or higher
 
-● A class file to analyze
+● Any version of the Java Development Kit
+
+● A class or jar file to analyze
