@@ -11,11 +11,16 @@ import com.github.gawkat.saturn.view.LoaderGUI;
  */
 public class Saturn {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	public Saturn() {
+		loadUISettings();
+		new LoaderGUI();
+	}
+
+	public static boolean isWindows() {
+		return System.getProperty("os.name").startsWith("Windows");
+	}
+
+	private void loadUISettings() {
 		try {
 			// Set System L&F
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -28,8 +33,12 @@ public class Saturn {
 		} catch (IllegalAccessException e) {
 			// handle exception
 		}
-		// TODO System specifics
-		new LoaderGUI();
 	}
 
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		new Saturn();
+	}
 }

@@ -46,7 +46,6 @@ public class LoaderGUI extends JFrame {
 							.getTransferable().getTransferData(
 									DataFlavor.javaFileListFlavor);
 					for (File file : droppedFiles) {
-						System.out.println(file.getAbsolutePath());
 						if (file.getName().endsWith(".jar")
 								|| file.getName().endsWith(".class")) {
 							MainGUI.init(file);
