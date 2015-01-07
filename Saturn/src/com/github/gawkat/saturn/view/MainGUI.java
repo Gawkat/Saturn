@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -18,6 +20,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
+
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.Theme;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 import com.github.gawkat.saturn.Decompiler;
 import com.github.gawkat.saturn.util.InfoHandler;
@@ -39,6 +46,7 @@ public class MainGUI extends JFrame implements ActionListener {
 	private JPanel mainPanel;
 
 	private JTextPane mainTextPane;
+	private RSyntaxTextArea decompiledTextArea;
 
 	Font largeLabelFont = new Font("Verdana", Font.BOLD, 16);
 	Font smallLabelFont = new Font("Verdana", Font.PLAIN, 14);
@@ -115,13 +123,26 @@ public class MainGUI extends JFrame implements ActionListener {
 		mainPanel = new JPanel(new BorderLayout());
 		contentPane.add(mainPanel, BorderLayout.CENTER);
 
-		// Main Text Pane
-		mainTextPane = new JTextPane();
-		mainTextPane.setEditable(false);
-		mainTextPane.setFont(bodyFont);
-		mainTextPane.setText(Decompiler.decompile(file));
+		// Decompiled Text Pane
+		decompiledTextArea = new RSyntaxTextArea();
+		decompiledTextArea
+				.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+		decompiledTextArea.setCodeFoldingEnabled(true);
+		decompiledTextArea.setAntiAliasingEnabled(true);
+		decompiledTextArea.setEditable(false);
+		RTextScrollPane dSP = new RTextScrollPane(decompiledTextArea);
+		dSP.setFoldIndicatorEnabled(true);
+		decompiledTextArea.setText(Decompiler.decompile(file));
 
-		mainPanel.add(mainTextPane, BorderLayout.CENTER);
+		try {
+			Theme theme = Theme.load(getClass().getResourceAsStream(
+					"/res/theme.xml"));
+			theme.apply(decompiledTextArea);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		mainPanel.add(dSP, BorderLayout.CENTER);
 	}
 
 	public void actionPerformed(ActionEvent e) {
