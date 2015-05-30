@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -18,7 +17,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -28,7 +26,12 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 
 import com.github.gawkat.saturn.Decompiler;
 import com.github.gawkat.saturn.util.InfoHandler;
+import com.github.gawkat.saturn.util.ReadabilityEnhancer;
 
+/**
+ * @author Gawkat
+ *
+ */
 public class MainGUI extends JFrame implements ActionListener {
 
 	// TODO create in normal class file
@@ -38,15 +41,18 @@ public class MainGUI extends JFrame implements ActionListener {
 	private JPanel contentPane;
 	private JMenuBar menuBar;
 
-	private JMenu fileMenu;
+	private JMenu fileMenu, refactorMenu;
 
-	private JMenuItem open, exit;
+	private JMenuItem open, exit, readabilityEnhancer;
 
 	private JPanel infoPanel;
 	private JPanel mainPanel;
 
-	private JTextPane mainTextPane;
 	private RSyntaxTextArea decompiledTextArea;
+
+	private boolean enableReadabilityEnhancer = false;
+
+	private ReadabilityEnhancer rEnhancer = new ReadabilityEnhancer();
 
 	Font largeLabelFont = new Font("Verdana", Font.BOLD, 16);
 	Font smallLabelFont = new Font("Verdana", Font.PLAIN, 14);
@@ -88,6 +94,12 @@ public class MainGUI extends JFrame implements ActionListener {
 		fileMenu.add(exit);
 		exit.addActionListener(this);
 		fileMenu.add(exit);
+		// Refactor
+		refactorMenu = new JMenu("Refactor");
+		menuBar.add(refactorMenu);
+		readabilityEnhancer = new JMenuItem("Enable Readability Enhancer");
+		refactorMenu.add(readabilityEnhancer);
+		readabilityEnhancer.addActionListener(this);
 
 		setJMenuBar(menuBar);
 
@@ -153,6 +165,18 @@ public class MainGUI extends JFrame implements ActionListener {
 		if (e.getSource() == exit) {
 			System.exit(0);
 		}
+		if (e.getSource() == readabilityEnhancer) {
+			if (enableReadabilityEnhancer) {
+				enableReadabilityEnhancer = false;
+				readabilityEnhancer.setText("Enable Readability Enhancer");
+				decompiledTextArea.setText(rEnhancer.reverse(decompiledTextArea
+						.getText()));
+			} else {
+				enableReadabilityEnhancer = true;
+				readabilityEnhancer.setText("Disable Readability Enhancer");
+				decompiledTextArea.setText(rEnhancer.enhance(decompiledTextArea
+						.getText()));
+			}
+		}
 	}
-
 }

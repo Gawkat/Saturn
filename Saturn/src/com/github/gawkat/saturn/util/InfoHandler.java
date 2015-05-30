@@ -11,8 +11,13 @@ import com.github.gawkat.saturn.Saturn;
 public class InfoHandler {
 
 	public static String getFileSize(File file) {
-		// TODO heck if kb/mb?
-		return file.length() + " bytes";
+		if (file.length() > 1000000) {
+			return file.length() / 1000000 + " MB";
+		} else if (file.length() > 1000) {
+			return file.length() / 1000 + " kB";
+		} else {
+			return file.length() + " Bytes";
+		}
 	}
 
 	public static String getJavaVersion(File file) {

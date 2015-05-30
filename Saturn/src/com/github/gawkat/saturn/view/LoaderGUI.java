@@ -25,7 +25,6 @@ public class LoaderGUI extends JFrame {
 	private final JLabel label;
 
 	public LoaderGUI() {
-		// TODO
 		super("Saturn");
 		setSize(300, 200);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
