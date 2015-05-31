@@ -10,6 +10,6 @@ Prerequisites
 
 ● Java Runtime Environment version 8 or higher
 
-● Any version of the Java Development Kit
+● Java Development Kit version 8 or higher
 
 ● A class or jar file to analyze
