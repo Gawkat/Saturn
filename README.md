@@ -1,7 +1,7 @@
 Saturn
 ======
 
-Java Decompiler/Dissasembler
+Java Decompiler
 
 Don't expect this to be of any use, or even work.
 
