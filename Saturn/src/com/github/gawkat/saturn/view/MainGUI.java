@@ -17,6 +17,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -26,7 +27,6 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 
 import com.github.gawkat.saturn.Decompiler;
 import com.github.gawkat.saturn.util.InfoHandler;
-import com.github.gawkat.saturn.util.ReadabilityEnhancer;
 
 /**
  * @author Gawkat
@@ -38,21 +38,20 @@ public class MainGUI extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
+	private JTabbedPane tabbedPane;
+
 	private JPanel contentPane;
 	private JMenuBar menuBar;
 
-	private JMenu fileMenu, refactorMenu;
+	private JMenu fileMenu;
 
-	private JMenuItem open, exit, readabilityEnhancer;
+	private JMenuItem open, exit;
 
 	private JPanel infoPanel;
+	private JPanel bytecodePanel;
 	private JPanel mainPanel;
 
-	private RSyntaxTextArea decompiledTextArea;
-
-	private boolean enableReadabilityEnhancer = false;
-
-	private ReadabilityEnhancer rEnhancer = new ReadabilityEnhancer();
+	private RSyntaxTextArea decompiledTextArea, bytecodeTextArea;
 
 	Font largeLabelFont = new Font("Verdana", Font.BOLD, 16);
 	Font smallLabelFont = new Font("Verdana", Font.PLAIN, 14);
@@ -94,17 +93,25 @@ public class MainGUI extends JFrame implements ActionListener {
 		fileMenu.add(exit);
 		exit.addActionListener(this);
 		fileMenu.add(exit);
-		// Refactor
-		refactorMenu = new JMenu("Refactor");
-		menuBar.add(refactorMenu);
-		readabilityEnhancer = new JMenuItem("Enable Readability Enhancer");
-		refactorMenu.add(readabilityEnhancer);
-		readabilityEnhancer.addActionListener(this);
 
 		setJMenuBar(menuBar);
 
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
+
+		// bytecodePanel
+		bytecodePanel = new JPanel(new BorderLayout());
+		bytecodeTextArea = new RSyntaxTextArea();
+		bytecodeTextArea
+				.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+		bytecodeTextArea.setCodeFoldingEnabled(true);
+		bytecodeTextArea.setAntiAliasingEnabled(true);
+		bytecodeTextArea.setEditable(false);
+		RTextScrollPane dSP2 = new RTextScrollPane(bytecodeTextArea);
+		dSP2.setFoldIndicatorEnabled(true);
+		bytecodeTextArea.setText(Decompiler.dissasemble(file));
+
+		bytecodePanel.add(dSP2, BorderLayout.CENTER);
 
 		// InfoPanel
 		infoPanel = new JPanel();
@@ -133,7 +140,6 @@ public class MainGUI extends JFrame implements ActionListener {
 
 		// MainPanel
 		mainPanel = new JPanel(new BorderLayout());
-		contentPane.add(mainPanel, BorderLayout.CENTER);
 
 		// Decompiled Text Pane
 		decompiledTextArea = new RSyntaxTextArea();
@@ -150,11 +156,19 @@ public class MainGUI extends JFrame implements ActionListener {
 			Theme theme = Theme.load(getClass().getResourceAsStream(
 					"/res/theme.xml"));
 			theme.apply(decompiledTextArea);
+			theme.apply(bytecodeTextArea);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		mainPanel.add(dSP, BorderLayout.CENTER);
+
+		// Tabbed Pane
+		tabbedPane = new JTabbedPane();
+		tabbedPane.addTab("Decompiled", mainPanel);
+		tabbedPane.add("Bytecode", bytecodePanel);
+
+		contentPane.add(tabbedPane, BorderLayout.CENTER);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -164,19 +178,6 @@ public class MainGUI extends JFrame implements ActionListener {
 		}
 		if (e.getSource() == exit) {
 			System.exit(0);
-		}
-		if (e.getSource() == readabilityEnhancer) {
-			if (enableReadabilityEnhancer) {
-				enableReadabilityEnhancer = false;
-				readabilityEnhancer.setText("Enable Readability Enhancer");
-				decompiledTextArea.setText(rEnhancer.reverse(decompiledTextArea
-						.getText()));
-			} else {
-				enableReadabilityEnhancer = true;
-				readabilityEnhancer.setText("Disable Readability Enhancer");
-				decompiledTextArea.setText(rEnhancer.enhance(decompiledTextArea
-						.getText()));
-			}
 		}
 	}
 }

@@ -28,11 +28,23 @@ public class Decompiler {
 		StringBuilder stringBuilder = new StringBuilder();
 		for (int i = 0; i < lines.length; i++) {
 			if (i != 0 && i != lines.length) {
-				stringBuilder.append(lines[i] + System.getProperty("line.separator"));
+				stringBuilder.append(lines[i]
+						+ System.getProperty("line.separator"));
 			} else if (i == lines.length) {
 				stringBuilder.append(lines[i]);
 			}
 		}
 		return stringBuilder.toString();
+	}
+
+	public static String dissasemble(File file) {
+		String command = "javap -c " + file.getAbsolutePath();
+		String unProcessed;
+		if (Saturn.isWindows()) {
+			unProcessed = CLIHandler.runWindowsCommand(command);
+		} else {
+			unProcessed = CLIHandler.runUnixCommand(command);
+		}
+		return stripMetadata(unProcessed);
 	}
 }
